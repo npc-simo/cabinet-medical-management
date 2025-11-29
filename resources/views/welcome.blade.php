@@ -266,11 +266,14 @@
     </div>
 
     <!-- CTA -->
-    <div class="cta-section">
-        <h2>Prenez rendez-vous aujourd'hui</h2>
-        <p>Réservez votre consultation en quelques clics</p>
-        <a href="/rendezvous" class="btn-main">Prendre rendez-vous</a>
-    </div>
+<div class="cta-section">
+    <h2>Prenez rendez-vous aujourd'hui</h2>
+    <p>Réservez votre consultation en quelques clics</p>
+    <a href="{{ route('rendezvous.create') }}" class="btn-main">
+        Prendre rendez-vous
+    </a>
+</div>
+
 
     <!-- INFO GRID -->
     <div class="info-section">
