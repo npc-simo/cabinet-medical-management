@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Rendezvous extends Model
 {
     protected $table = 'rendezvous';
-    protected $primaryKey = 'id_rv';
-    public $timestamps = true; // عندك created_at / updated_at ف الجدول
+    protected $primaryKey = 'id_rv';  // ← This is correct
+    public $timestamps = true;
 
     protected $fillable = [
         'id_patient',
@@ -25,6 +25,6 @@ class Rendezvous extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'id_patient');
+        return $this->belongsTo(Patient::class, 'id_patient', 'id_patient');
     }
 }

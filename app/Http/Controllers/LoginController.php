@@ -13,39 +13,31 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-    {
-        // Validation
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        // Credentials
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        // Attempt login
-        if (Auth::attempt($credentials)) {
-            
-            $user = Auth::user();
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate(); // Add this for security
+        
+        $user = Auth::user();
 
-            // Redirect selon role
-            if ($user->role === 'medecin') {
-                return redirect()->route('medecin.dashboard');
-            }
-
-            if ($user->role === 'secretaire') {
-                return redirect()->route('secretaire.dashboard');
-            }
-
-            // Par défaut
-            return redirect()->route('patient.dashboard');
-        }
-
-        // Login failed
-        return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.'
-        ]);
+        // Redirect based on role
+        return match($user->role) {
+            'medecin' => redirect()->route('medecin.dashboard'),
+            'secretaire' => redirect()->route('secretaire.dashboard'),
+            default => redirect()->route('patient.dashboard'),
+        };
     }
+
+    return back()->withErrors([
+        'email' => 'Email ou mot de passe incorrect.'
+    ])->onlyInput('email');
+}
 
     public function logout()
     {

@@ -148,12 +148,12 @@
 
                 <div class="rdv-actions">
 
-                    <a href="/rendezvous.show , $rv->id" class="btn-action btn-details">
+                    <a href="{{ route('rendezvous.show', $rv->id_rv) }}" class="btn-action btn-details">
                         <i class="ri-eye-line"></i>Détails
                     </a>
 
                     @if($cardClass !== 'annule')
-                    <form method="POST" action="/rendezvous.cancel, $rv->id" style="flex:1;">
+                    <form method="POST" action="{{ route('rendezvous.cancel', $rv->id_rv) }}" style="flex:1;">
                         @csrf
                         @method('PATCH')
                         <button class="btn-action btn-annuler" onclick="return confirm('Voulez-vous annuler ce rendez-vous ?');">

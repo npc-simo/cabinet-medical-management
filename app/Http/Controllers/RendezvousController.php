@@ -13,11 +13,8 @@ class RendezvousController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        // patient lié à ce compte
         $patient = Patient::where('user_id', $user->id)->first();
-
-        $rendezvous = collect();   // collection vide par défaut
+        $rendezvous = collect();
 
         if ($patient) {
             $rendezvous = Rendezvous::where('id_patient', $patient->id_patient)
@@ -51,19 +48,19 @@ class RendezvousController extends Controller
         $data = $request->validate([
             'nom'             => 'required|string|max:100',
             'prenom'          => 'required|string|max:100',
-            'date_naissance'  => 'nullable|date',
+            'date_naissance'  => 'nullable|date|before:today',
             'sexe'            => 'nullable|in:M,F',
             'telephone'       => 'nullable|string|max:20',
             'cin'             => 'nullable|string|max:20',
             'adresse'         => 'nullable|string',
-            'date_rv'         => 'required|date',
-            'heure_rv'        => 'required',
-            'motif'           => 'required|string',
+            'date_rv'         => 'required|date|after_or_equal:today',
+            'heure_rv'        => 'required|date_format:H:i',
+            'motif'           => 'required|string|max:500',
         ]);
 
         $user = Auth::user();
 
-        // on crée / récupère le patient lié à ce user
+        // Créer ou récupérer le patient
         $patient = Patient::firstOrCreate(
             ['user_id' => $user->id],
             [
@@ -77,6 +74,7 @@ class RendezvousController extends Controller
             ]
         );
 
+        // Créer le rendez-vous
         Rendezvous::create([
             'id_patient' => $patient->id_patient,
             'date_rv'    => $data['date_rv'],
@@ -90,16 +88,35 @@ class RendezvousController extends Controller
             ->with('success', 'Votre rendez-vous a été enregistré avec succès.');
     }
 
+    // ====== AFFICHER UN RENDEZ-VOUS ======
+    public function show($id)
+    {
+        $user = Auth::user();
+        $patient = Patient::where('user_id', $user->id)->firstOrFail();
+
+        $rendezvous = Rendezvous::where('id_rv', $id)
+            ->where('id_patient', $patient->id_patient)
+            ->firstOrFail();
+
+        return view('patient.rendezvous_show', compact('rendezvous', 'patient'));
+    }
+
     // ====== ANNULER UN RENDEZ-VOUS ======
     public function cancel($id)
     {
         $user = Auth::user();
         $patient = Patient::where('user_id', $user->id)->firstOrFail();
 
-        // نتأكد بلي هاد RDV ديال هاد الـ patient
-        $rdv = Rendezvous::where('id', $id)
+        $rdv = Rendezvous::where('id_rv', $id)
             ->where('id_patient', $patient->id_patient)
             ->firstOrFail();
+
+        // Ne pas annuler un RDV déjà annulé
+        if ($rdv->statut === 'Annulé') {
+            return redirect()
+                ->route('patient.rendezvous.index')
+                ->with('info', 'Ce rendez-vous est déjà annulé.');
+        }
 
         $rdv->statut = 'Annulé';
         $rdv->save();
