@@ -15,6 +15,7 @@
     </style>
 </head>
 <body>
+    @include('partials.dashboard_back')
 <div class="card">
     <h1>Détail du rendez-vous</h1>
 

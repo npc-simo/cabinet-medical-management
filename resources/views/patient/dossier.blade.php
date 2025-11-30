@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-
+@include('partials.dashboard_back')
 <header>
     <h2><i class="ri-folder-user-line"></i> Mon dossier médical</h2>
 </header>

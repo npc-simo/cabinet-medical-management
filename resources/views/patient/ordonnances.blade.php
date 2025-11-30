@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-
+@include('partials.dashboard_back')
 <header>
     <h2><i class="ri-capsule-line"></i> Mes ordonnances</h2>
 </header>

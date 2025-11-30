@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cabinet Médical – Dr.XXXXXX</title>
+    <title>Cabinet Médical </title>
 
     <!-- GOOGLE FONT – POPPINS -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -230,7 +230,7 @@
 <header>
     <div class="header-content">
         <div class="header-left">
-            <h2>Cabinet Médical – Dr.XXXXXX</h2>
+            <h2>Cabinet Médical </h2>
             <p>Médecin Généraliste – Soins, suivis et consultations</p>
         </div>
 
@@ -308,7 +308,7 @@
 
 <!-- FOOTER -->
 <footer>
-    <p><strong>Cabinet Médical – Dr. XXXXXXXX</strong></p>
+    <p><strong>Cabinet Médical </strong></p>
     <p>Adresse : Rue Exemple, Ville, Maroc</p>
     <p>Téléphone : 06 00 00 00 00</p>
     <p>Email : contact@cabinet-medical.ma</p>

@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-
+@include('partials.dashboard_back')
 <header>
     <h2><i class="ri-receipt-line"></i> Mes factures</h2>
 </header>

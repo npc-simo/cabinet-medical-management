@@ -121,7 +121,7 @@
     </style>
 </head>
 <body>
-
+@include('partials.dashboard_back')
 <div class="header">
     <h1>
         <i class="ri-calendar-check-line"></i>

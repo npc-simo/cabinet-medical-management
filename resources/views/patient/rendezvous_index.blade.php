@@ -76,7 +76,7 @@
     </style>
 </head>
 <body>
-
+@include('partials.dashboard_back')
 @php
     use Carbon\Carbon;
     $user = auth()->user();
@@ -85,7 +85,7 @@
 <header>
     <div class="header-content">
         <div class="header-left">
-            <h2><i class="ri-hospital-line"></i> Cabinet Médical – Dr. ELHAJJI Mohammed</h2>
+            <h2><i class="ri-hospital-line"></i> Cabinet Médical</h2>
             <p>Espace Patient</p>
         </div>
 
