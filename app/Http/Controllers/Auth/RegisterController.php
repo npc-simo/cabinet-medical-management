@@ -18,12 +18,12 @@ class RegisterController extends Controller
     // traiter formulaire
     public function register(Request $request)
     {
-        // نفس الفاليداسيون لي درتي فـ PHP
+       
         $request->validate([
-            'name'                  => ['required', 'regex:/^[a-zA-Z ]+$/'],
-            'email'                 => ['required', 'email', 'unique:users,email'],
-            'password'              => ['required', 'min:8', 'confirmed'], // password_confirmation
-        ]);
+    'name'     => ['required', 'string', 'max:255'],
+    'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+    'password' => ['required', 'string', 'min:8', 'confirmed'],
+]);
 
         // création user
         User::create([

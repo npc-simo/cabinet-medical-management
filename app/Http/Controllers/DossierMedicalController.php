@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DossierMedical;
+use App\Models\Patient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,12 +14,19 @@ class DossierMedicalController extends Controller
     {
         $user = Auth::user();
 
-        $dossiers = DossierMedical::where('patient_id', $user->id)
+        // chercher le patient lié à cet utilisateur
+        $patient = Patient::where('user_id', $user->id)->first();
+
+        // tous les dossiers médicaux (documents) de ce patient
+        $documents = DossierMedical::where('patient_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // الملف الصحيح عندك هو: resources/views/patient/dossier.blade.php
-        return view('patient.dossier', compact('dossiers', 'user'));
+        return view('patient.dossier', compact(
+            'user',
+            'patient',
+            'documents'
+        ));
     }
 
     // تحميل الملف فقط (ما عندكش صفحة show)

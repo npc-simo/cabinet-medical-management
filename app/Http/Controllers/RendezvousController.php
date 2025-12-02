@@ -43,50 +43,68 @@ class RendezvousController extends Controller
     }
 
     // ====== ENREGISTRER LE RDV ======
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'nom'             => 'required|string|max:100',
-            'prenom'          => 'required|string|max:100',
-            'date_naissance'  => 'nullable|date|before:today',
-            'sexe'            => 'nullable|in:M,F',
-            'telephone'       => 'nullable|string|max:20',
-            'cin'             => 'nullable|string|max:20',
-            'adresse'         => 'nullable|string',
-            'date_rv'         => 'required|date|after_or_equal:today',
-            'heure_rv'        => 'required|date_format:H:i',
-            'motif'           => 'required|string|max:500',
-        ]);
+    // ====== ENREGISTRER LE RDV ======
+public function store(Request $request)
+{
+    $data = $request->validate([
+        'nom'             => 'required|string|max:100',
+        'prenom'          => 'required|string|max:100',
+        'date_naissance'  => 'nullable|date|before:today',
+        'sexe'            => 'nullable|in:M,F',
+        'telephone'       => 'nullable|string|max:20',
+        'cin'             => 'nullable|string|max:20',
+        'adresse'         => 'nullable|string',
+        'date_rv'         => 'required|date|after_or_equal:today',
+        'heure_rv'        => 'required|date_format:H:i',
+        'motif'           => 'required|string|max:500',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        // Créer ou récupérer le patient
-        $patient = Patient::firstOrCreate(
-            ['user_id' => $user->id],
-            [
-                'nom'            => $data['nom'],
-                'prenom'         => $data['prenom'],
-                'date_naissance' => $data['date_naissance'] ?? null,
-                'sexe'           => $data['sexe'] ?? null,
-                'telephone'      => $data['telephone'] ?? null,
-                'adresse'        => $data['adresse'] ?? null,
-                'cin'            => $data['cin'] ?? null,
-            ]
-        );
+    // 1) Créer ou récupérer le patient
+    $patient = Patient::firstOrCreate(
+        ['user_id' => $user->id],
+        [
+            'nom'            => $data['nom'],
+            'prenom'         => $data['prenom'],
+            'date_naissance' => $data['date_naissance'] ?? null,
+            'sexe'           => $data['sexe'] ?? null,
+            'telephone'      => $data['telephone'] ?? null,
+            'adresse'        => $data['adresse'] ?? null,
+            'cin'            => $data['cin'] ?? null,
+        ]
+    );
 
-        // Créer le rendez-vous
-        Rendezvous::create([
-            'id_patient' => $patient->id_patient,
-            'date_rv'    => $data['date_rv'],
-            'heure_rv'   => $data['heure_rv'],
-            'motif'      => $data['motif'],
-            'statut'     => 'En attente',
-        ]);
+    // 2) Vérifier si le créneau est déjà occupé
+    $rdvExistant = Rendezvous::where('id_patient', $patient->id_patient)
+        ->where('date_rv', $data['date_rv'])
+        ->where('heure_rv', $data['heure_rv'])
+        ->whereIn('statut', ['En attente', 'Confirmé'])
+        ->first();
 
-        return redirect()
-            ->route('patient.rendezvous.index')
-            ->with('success', 'Votre rendez-vous a été enregistré avec succès.');
+    if ($rdvExistant) {
+        // branche "[Créneau occupé]" du diagramme
+        return back()
+            ->withInput()
+            ->withErrors([
+                'date_rv' => 'Ce créneau n’est pas disponible. Vous avez déjà un rendez-vous à cette date et heure.',
+            ]);
     }
+
+    // 3) Créer le rendez-vous (branche "[Créneau disponible]")
+    Rendezvous::create([
+        'id_patient' => $patient->id_patient,
+        'date_rv'    => $data['date_rv'],
+        'heure_rv'   => $data['heure_rv'],
+        'motif'      => $data['motif'],
+        'statut'     => 'En attente',
+    ]);
+
+    return redirect()
+        ->route('patient.rendezvous.index')
+        ->with('success', 'Votre rendez-vous a été enregistré avec succès et est en attente de validation.');
+}
+
 
     // ====== AFFICHER UN RENDEZ-VOUS ======
     public function show($id)
